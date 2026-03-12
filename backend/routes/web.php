@@ -2,10 +2,26 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Http;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/worker-files/{filename}', function (string $filename) {
+    abort_unless(preg_match('/^[A-Za-z0-9._-]+$/', $filename), 404);
+
+    $workerUrl = rtrim(env('PYTHON_WORKER_URL', 'http://127.0.0.1:8001'), '/');
+    $response = Http::timeout(120)->get("{$workerUrl}/files/{$filename}");
+
+    if (!$response->successful()) {
+        abort(404);
+    }
+
+    $contentType = $response->header('Content-Type') ?? 'application/octet-stream';
+
+    return response($response->body(), 200)->header('Content-Type', $contentType);
+})->name('worker.files');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\CampaignController::class, 'index'])->name('dashboard');

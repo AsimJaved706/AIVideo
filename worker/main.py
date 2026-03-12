@@ -25,6 +25,7 @@ class GenerateRequest(BaseModel):
     campaign_id: int
     topic: str
     video_length: int = 60
+    public_app_url: Optional[str] = None
     storage_preference: str = "local" # local or s3
     gemini_api_key: Optional[str] = None
     elevenlabs_api_key: Optional[str] = None
@@ -55,7 +56,10 @@ def get_asset_url(req: GenerateRequest, local_path: str) -> str:
     
     # Fallback to local
     filename = os.path.basename(local_path)
-    return f"http://127.0.0.1:8001/files/{filename}"
+    base = (req.public_app_url or "").rstrip("/")
+    if base:
+        return f"{base}/worker-files/{filename}"
+    return f"http://127.0.0.1/files/{filename}"
 
 
 def build_script_preview(script_data: dict) -> str:
@@ -130,10 +134,12 @@ def process_video_pipeline(req: GenerateRequest):
                         style=req.voice_style,
                         use_speaker_boost=req.voice_speaker_boost,
                     )
+                audio_url = get_asset_url(req, audio_file)
+                api_client.upload_media_record(req.video_id, "audio", audio_url, req.campaign_id)
                 audio_paths.append(audio_file)
 
         # Step 3: Generate Visuals (RunwayML + Pollinations.ai seed image)
-        api_client.update_video_status(req.video_id, "Generating Visuals")
+        api_client.update_video_status(req.video_id, "Fetching Visuals")
         video_paths = []
         for i, scene in enumerate(script_data.get('scenes', [])):
             keyword = scene.get('visual_description', '')
@@ -142,6 +148,8 @@ def process_video_pipeline(req: GenerateRequest):
                 
                 if os.path.exists(vid_file):
                     print(f"Video file {vid_file} exists. Skipping generation.")
+                    visual_url = get_asset_url(req, vid_file)
+                    api_client.upload_media_record(req.video_id, "visual", visual_url, req.campaign_id)
                     video_paths.append(vid_file)
                     continue
                     
@@ -169,6 +177,8 @@ def process_video_pipeline(req: GenerateRequest):
                         framing=req.image_framing,
                         negative_prompt=req.image_negative_prompt,
                     )
+                    visual_url = get_asset_url(req, res)
+                    api_client.upload_media_record(req.video_id, "visual", visual_url, req.campaign_id)
                     video_paths.append(res)
                 except Exception as e:
                     with open("/tmp/runway_debug.log", "a") as logf:
@@ -178,17 +188,18 @@ def process_video_pipeline(req: GenerateRequest):
                     # The MoviePy renderer will need to be resilient to missing clips
         
         # Step 4: Render Video
-        api_client.update_video_status(req.video_id, "Rendering Video")
+        api_client.update_video_status(req.video_id, "Rendering")
         final_video_path = f"/tmp/{req.video_id}_final.mp4"
         render_service.render_final_video(video_paths, audio_paths, final_video_path)
 
         # Step 5: Upload final asset
-        api_client.update_video_status(req.video_id, "Publishing Media")
+        api_client.update_video_status(req.video_id, "Uploading")
         video_url = get_asset_url(req, final_video_path)
         if video_url:
             api_client.upload_media_record(req.video_id, "final_video", video_url, req.campaign_id)
 
         # Finished
+        api_client.update_video_status(req.video_id, "Publishing", video_url)
         api_client.update_video_status(req.video_id, "Ready", video_url)
 
     except Exception as e:

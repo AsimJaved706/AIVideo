@@ -11,7 +11,7 @@ class VideoController extends Controller
     {
         $videos = \App\Models\Video::whereHas('campaign', function ($q) use ($request) {
             $q->where('user_id', $request->user()->id);
-        })->with('campaign')->orderBy('created_at', 'desc')->get();
+        })->with(['campaign', 'mediaAssets', 'jobStatuses'])->orderBy('created_at', 'desc')->get();
         return response()->json($videos);
     }
 
@@ -19,7 +19,7 @@ class VideoController extends Controller
     {
         $video = \App\Models\Video::whereHas('campaign', function ($q) use ($request) {
             $q->where('user_id', $request->user()->id);
-        })->with(['campaign', 'mediaAssets', 'postLogs', 'analytics'])->findOrFail($id);
+        })->with(['campaign', 'mediaAssets', 'postLogs', 'analytics', 'jobStatuses'])->findOrFail($id);
         return response()->json($video);
     }
 

@@ -29,6 +29,7 @@ class GenerateScriptJob implements ShouldQueue
                 'campaign_id' => $this->video->campaign_id,
                 'topic' => $this->video->campaign->topic,
                 'video_length' => $this->video->campaign->video_length,
+                'public_app_url' => rtrim(config('app.url', ''), '/'),
                 'storage_preference' => $this->video->campaign->user->storage_preference ?? 'local',
                 'gemini_api_key' => $this->video->campaign->user->gemini_api_key ?? '',
                 'elevenlabs_api_key' => $this->video->campaign->user->elevenlabs_api_key ?? '',
