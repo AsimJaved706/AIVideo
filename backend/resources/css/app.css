@@ -11,6 +11,12 @@
 			linear-gradient(180deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%);
 		background-attachment: fixed;
 	}
+
+	@media (max-width: 1024px) {
+		body {
+			@apply h-auto overflow-auto;
+		}
+	}
 }
 
 @layer components {
@@ -23,23 +29,23 @@
 	}
 
 	.section-shell {
-		@apply mx-auto max-w-7xl px-6 md:px-10;
+		@apply mx-auto max-w-7xl px-4 md:px-6 lg:px-10;
 	}
 
 	.section-title {
-		@apply text-3xl md:text-5xl font-black tracking-tight text-slate-900;
+		@apply text-2xl md:text-3xl lg:text-5xl font-black tracking-tight text-slate-900;
 	}
 
 	.section-copy {
-		@apply text-base md:text-lg leading-8 text-slate-600;
+		@apply text-sm md:text-base lg:text-lg leading-7 md:leading-8 text-slate-600;
 	}
 
 	.pill-badge {
-		@apply inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700;
+		@apply inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold text-indigo-700;
 	}
 
 	.premium-card {
-		@apply glass-panel rounded-3xl p-6 md:p-8 transition duration-300;
+		@apply glass-panel rounded-2xl md:rounded-3xl p-4 md:p-6 lg:p-8 transition duration-300;
 	}
 
 	.premium-card:hover {
@@ -47,7 +53,7 @@
 	}
 
 	.three-d-card {
-		@apply relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50/70 to-white shadow-xl shadow-slate-200/70 backdrop-blur-xl;
+		@apply relative overflow-hidden rounded-2xl md:rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50/70 to-white shadow-xl shadow-slate-200/70 backdrop-blur-xl;
 		transform-style: preserve-3d;
 	}
 
@@ -70,6 +76,12 @@
 		transform: perspective(1600px) rotateX(4deg) rotateY(-5deg) translateY(-8px);
 	}
 
+	@media (max-width: 768px) {
+		.three-d-card:hover {
+			transform: translateY(-4px);
+		}
+	}
+
 	.top-nav {
 		@apply sticky top-0 z-50 border-b border-slate-200 bg-white/85 backdrop-blur-xl;
 	}
@@ -79,7 +91,7 @@
 	}
 
 	.metric-value {
-		@apply text-3xl md:text-5xl font-black tracking-tight text-slate-900;
+		@apply text-2xl md:text-4xl lg:text-5xl font-black tracking-tight text-slate-900;
 	}
 
 	.metric-label {
@@ -110,6 +122,19 @@
 
 	.float-slower {
 		animation: floatSlow 8s ease-in-out infinite;
+	}
+
+	/* Mobile-first responsive utilities */
+	@media (max-width: 640px) {
+		.hide-mobile {
+			@apply hidden;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.show-lg {
+			@apply block;
+		}
 	}
 }
 

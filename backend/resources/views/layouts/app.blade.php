@@ -13,15 +13,34 @@
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased text-slate-900 flex h-screen overflow-hidden bg-slate-100">
+<body class="font-sans antialiased text-slate-900 flex h-screen overflow-hidden bg-slate-100" x-data="{ sidebarOpen: window.innerWidth >= 1024 }" @resize.window="sidebarOpen = window.innerWidth >= 1024"  @click.away="sidebarOpen = false">
+
+    <!-- Mobile Menu Button -->
+    <div class="fixed lg:hidden top-4 left-4 z-40" x-cloak>
+        <button @click="sidebarOpen = !sidebarOpen" class="p-2 bg-indigo-600 text-white rounded-lg shadow-lg hover:bg-indigo-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div @click="sidebarOpen = false" x-show="sidebarOpen" x-transition class="fixed inset-0 bg-black/50 lg:hidden z-30" x-cloak></div>
 
     <!-- Sidebar -->
-    <aside class="w-72 border-r border-slate-200 bg-white text-slate-900 backdrop-blur-xl flex flex-col h-full shadow-lg shadow-slate-200/70 flex-shrink-0">
-        <div class="h-20 flex items-center px-8 border-b border-slate-200">
-            <div class="text-2xl font-black tracking-tighter flex items-center gap-2">
+    <aside class="w-72 border-r border-slate-200 bg-white text-slate-900 backdrop-blur-xl flex flex-col h-full shadow-lg shadow-slate-200/70 flex-shrink-0 fixed lg:relative left-0 top-0 z-40 transition-transform lg:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" x-cloak>
+        <div class="h-20 flex items-center px-4 lg:px-8 border-b border-slate-200 justify-between">
+            <button @click="sidebarOpen = false" class="lg:hidden text-slate-600 hover:text-slate-900">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <div class="flex-1"></div>
+            <div class="text-lg lg:text-2xl font-black tracking-tighter flex items-center gap-2">
                 <div
                     class="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-400 to-purple-500 shadow-glow flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -37,7 +56,7 @@
             </div>
         </div>
 
-        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <nav class="flex-1 px-2 lg:px-4 py-6 space-y-2 overflow-y-auto">
             <a href="{{ route('dashboard') }}"
                 class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-100 shadow-sm' : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-700 border border-transparent' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,18 +105,17 @@
             @endif
         </nav>
 
-        <div class="p-4 border-t border-slate-200">
-            <div class="three-d-card px-4 py-4">
-            <div class="flex items-center gap-3 px-1 py-1">
-                <div
-                    class="w-10 h-10 rounded-full bg-indigo-700 flex items-center justify-center font-bold border-2 border-indigo-400/60">
-                    {{ substr(Auth::user()->name, 0, 1) }}
+        <div class="p-2 lg:p-4 border-t border-slate-200">
+            <div class="three-d-card px-2 lg:px-4 py-4">
+                <div class="flex items-center gap-2 lg:gap-3 px-1 py-1">
+                    <div class="w-8 lg:w-10 h-8 lg:h-10 rounded-full bg-indigo-700 flex items-center justify-center font-bold border-2 border-indigo-400/60 text-sm lg:text-base">
+                        {{ substr(Auth::user()->name, 0, 1) }}
+                    </div>
+                    <div class="flex-1 min-w-0 hidden sm:block">
+                        <p class="text-sm font-bold text-slate-900 truncate">{{ Auth::user()->name }}</p>
+                        <p class="text-xs text-slate-500 truncate">{{ Auth::user()->email }}</p>
+                    </div>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-bold text-slate-900 truncate">{{ Auth::user()->name }}</p>
-                    <p class="text-xs text-slate-500 truncate">{{ Auth::user()->email }}</p>
-                </div>
-            </div>
             <form method="POST" action="{{ route('logout') }}" class="mt-2">
                 @csrf
                 <button type="submit"
@@ -110,28 +128,28 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden bg-transparent">
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-transparent w-full">
         <!-- Top Header (Optional) -->
         @isset($header)
-            <header class="top-nav px-8 py-5 flex-shrink-0 flex items-center justify-between">
-                <div class="text-2xl font-bold text-slate-900">{{ $header }}</div>
-                <div class="hidden md:flex items-center gap-3 text-sm text-slate-600">
-                    <span class="rounded-full border border-emerald-400 bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">System Online</span>
-                    <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-semibold text-slate-600">Production Workspace</span>
+            <header class="top-nav px-4 lg:px-8 py-3 lg:py-5 flex-shrink-0 flex items-center justify-between gap-4">
+                <div class="text-lg lg:text-2xl font-bold text-slate-900 flex-1 truncate">{{ $header }}</div>
+                <div class="hidden md:flex items-center gap-2 lg:gap-3 text-xs lg:text-sm text-slate-600 flex-shrink-0">
+                    <span class="rounded-full border border-emerald-400 bg-emerald-50 px-2 lg:px-3 py-1 font-semibold text-emerald-700 whitespace-nowrap">System Online</span>
+                    <span class="rounded-full border border-slate-200 bg-slate-50 px-2 lg:px-3 py-1 font-semibold text-slate-600 hidden lg:block">Production Workspace</span>
                 </div>
             </header>
         @endisset
 
-        <div class="flex-1 overflow-y-auto p-8">
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8">
             <div class="max-w-7xl mx-auto">
                 {{ $slot }}
             </div>
         </div>
 
-        <footer class="border-t border-slate-200 bg-white px-8 py-4 text-sm text-slate-500 backdrop-blur-xl">
-            <div class="mx-auto flex max-w-7xl flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                <div>VideoAI Studio workspace</div>
-                <div>Professional dashboard • automation • rendering pipeline</div>
+        <footer class="border-t border-slate-200 bg-white px-4 lg:px-8 py-3 lg:py-4 text-xs lg:text-sm text-slate-500 backdrop-blur-xl flex-shrink-0">
+            <div class="mx-auto flex max-w-7xl flex-col gap-1 lg:gap-2 md:flex-row md:items-center md:justify-between">
+                <div>VideoAI Studio</div>
+                <div class="text-xs lg:text-sm">Professional automation • rendering • publishing pipeline</div>
             </div>
         </footer>
     </main>
