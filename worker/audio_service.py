@@ -1,6 +1,17 @@
 import os
 import requests
 
+
+def _prepare_spoken_text(text: str) -> str:
+    cleaned = (text or "").replace("\n", ". ").strip()
+    cleaned = " ".join(cleaned.split())
+    cleaned = cleaned.replace("•", " ").replace("- ", "")
+
+    if cleaned and cleaned[-1] not in ".!?":
+        cleaned += "."
+
+    return cleaned
+
 def generate_voiceover(
     text: str,
     file_path: str,
@@ -9,9 +20,9 @@ def generate_voiceover(
     model_id: str = "eleven_multilingual_v2",
     output_format: str = "mp3_44100_128",
     fallback_language: str = "en",
-    stability: float = 0.35,
-    similarity_boost: float = 0.8,
-    style: float = 0.15,
+    stability: float = 0.45,
+    similarity_boost: float = 0.85,
+    style: float = 0.05,
     use_speaker_boost: bool = True,
 ) -> str:
     """
@@ -30,7 +41,7 @@ def generate_voiceover(
         "xi-api-key": api_key
     }
     
-    normalized_text = " ".join((text or "").split())
+    normalized_text = _prepare_spoken_text(text)
     data = {
         "text": normalized_text,
         "model_id": model_id,

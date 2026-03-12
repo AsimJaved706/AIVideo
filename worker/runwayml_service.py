@@ -30,10 +30,11 @@ def generate_runway_video(
     client = RunwayML(api_key=api_key)
 
     enhanced_prompt = (
-        f"{visual_style} vertical 9:16 video, realistic human motion, natural lighting, "
-        f"camera motion {camera_motion}, lighting {lighting_style}, color palette {color_palette}, "
-        f"framing {framing}, detailed textures, believable environment, "
-        f"no CGI look, no animation artifacts. Scene: {prompt}"
+        f"{visual_style} vertical 9:16 live-action video, single continuous shot, realistic human motion, "
+        f"camera motion {camera_motion}, lighting {lighting_style}, color palette {color_palette}, framing {framing}, "
+        f"natural skin texture, real-world depth, consistent subject identity, physically plausible movement, "
+        f"stable composition, no CGI look, no animation artifacts, no warped faces, no jitter, no surreal morphing. "
+        f"Scene: {prompt}"
     )
 
     if negative_prompt:

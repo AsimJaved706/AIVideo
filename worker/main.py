@@ -160,6 +160,7 @@ def process_video_pipeline(req: GenerateRequest):
                         lighting_style=req.image_lighting_style,
                         color_palette=req.image_color_palette,
                         framing=req.image_framing,
+                        api_key=req.gemini_api_key,
                     )
                     if not image_data_uri:
                         raise Exception("Failed to generate a seed image.")
