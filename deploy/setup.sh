@@ -77,7 +77,7 @@ cd "$BACKEND_DIR"
 
 composer install --no-dev --optimize-autoloader
 
-if [ ! -f ".env" ]; then
+if [ ! -s ".env" ]; then
     cp .env.production .env
 fi
 
