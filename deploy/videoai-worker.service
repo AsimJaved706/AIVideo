@@ -1,0 +1,23 @@
+[Unit]
+Description=VideoAI Python FastAPI Worker
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/ai_video_platform/worker
+EnvironmentFile=/var/www/ai_video_platform/worker/.env
+ExecStart=/var/www/ai_video_platform/worker/venv/bin/uvicorn main:app \
+    --host 127.0.0.1 \
+    --port 8001 \
+    --workers 2 \
+    --timeout-keep-alive 300
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=videoai-worker
+
+[Install]
+WantedBy=multi-user.target
