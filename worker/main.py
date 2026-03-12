@@ -57,6 +57,20 @@ def get_asset_url(req: GenerateRequest, local_path: str) -> str:
     filename = os.path.basename(local_path)
     return f"http://127.0.0.1:8001/files/{filename}"
 
+
+def build_script_preview(script_data: dict) -> str:
+    scenes = script_data.get('scenes', []) if isinstance(script_data, dict) else []
+    if not scenes:
+        return ""
+
+    lines = []
+    for index, scene in enumerate(scenes, start=1):
+        narration = (scene.get('narration_text') or '').strip()
+        if narration:
+            lines.append(f"[Scene {index}] {narration}")
+
+    return "\n\n".join(lines)
+
 def process_video_pipeline(req: GenerateRequest):
     """
     Background task to orchestrate the video generation pipeline.
@@ -70,7 +84,7 @@ def process_video_pipeline(req: GenerateRequest):
             with open(script_path, "r") as f:
                 script_data = json.load(f)
         else:
-            api_client.update_video_status(req.video_id, "Generating Script")
+            api_client.update_video_status(req.video_id, "Generating Scripts")
             script_data = gemini_service.generate_video_script(
                 req.topic, 
                 req.video_length, 
@@ -81,13 +95,20 @@ def process_video_pipeline(req: GenerateRequest):
             # Save script locally
             with open(script_path, "w") as f:
                 json.dump(script_data, f)
+
+        script_preview = build_script_preview(script_data)
+        api_client.update_video_status(
+            req.video_id,
+            "Generating Voice",
+            title=script_data.get('title', ''),
+            description=script_preview,
+        )
             
         script_url = get_asset_url(req, script_path)
         if script_url:
             api_client.upload_media_record(req.video_id, "script", script_url, req.campaign_id)
 
         # Step 2: Generate Voice
-        api_client.update_video_status(req.video_id, "Generating Voice")
         audio_paths = []
         for i, scene in enumerate(script_data.get('scenes', [])):
             text = scene.get('narration_text', '')

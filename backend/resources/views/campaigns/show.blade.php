@@ -251,19 +251,12 @@
                                     <h5 class="text-sm font-bold text-gray-900 mb-2">AI Generated Script</h5>
                                     <div
                                         class="bg-gray-50 rounded-xl border border-gray-200 p-4 h-32 overflow-y-auto text-sm text-gray-600 font-mono">
-                                        @if($video->status === 'Pending' || $video->status === 'Generating Scripts')
+                                        @if(empty($video->description) && ($video->status === 'Pending' || $video->status === 'Generating Scripts'))
                                             [AI is currently writing the narrative script...]
+                                        @elseif(!empty($video->description))
+                                            {!! nl2br(e($video->description)) !!}
                                         @else
-                                            [Scene 1] Hook: "Did you know that Roman Emperors used the exact same focus techniques
-                                            programmers need today?"
-                                            <br><br>
-                                            [Scene 2] Body: "Marcus Aurelius practiced 'Obstacle is the Way'. When your code breaks,
-                                            that bug isn't a blocker, it's the path to understanding the architecture deeper."
-                                            <br><br>
-                                            [Scene 3] CTA: "Stop being frustrated by errors. Embrace them. Subscribe for more stoic
-                                            coding tips."
-                                            <br><br>
-                                            <i>(Full script stored securely in AWS S3 and passed to TTS engine)</i>
+                                            Script preview not available yet.
                                         @endif
                                     </div>
                                 </div>

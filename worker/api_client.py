@@ -12,13 +12,24 @@ def _base_api_url() -> str:
         base = f"{base}/api"
     return base
 
-def update_video_status(video_id: int, status: str, s3_url: str = None, error_message: str = None):
+def update_video_status(
+    video_id: int,
+    status: str,
+    s3_url: str = None,
+    error_message: str = None,
+    title: str = None,
+    description: str = None,
+):
     url = f"{_base_api_url()}/worker/videos/{video_id}/status"
     payload = {"status": status}
     if s3_url:
         payload["s3_url"] = s3_url
     if error_message:
         payload["error_message"] = error_message
+    if title is not None:
+        payload["title"] = title
+    if description is not None:
+        payload["description"] = description
         
     headers = {"Accept": "application/json"}
     response = requests.post(url, json=payload, headers=headers, timeout=30)

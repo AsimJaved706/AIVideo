@@ -28,7 +28,9 @@ class VideoController extends Controller
         $validated = $request->validate([
             'status' => 'required|string',
             's3_url' => 'nullable|string',
-            'error_message' => 'nullable|string'
+            'error_message' => 'nullable|string',
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
         ]);
         $video = \App\Models\Video::findOrFail($id);
         $video->update($validated);
