@@ -27,4 +27,9 @@ class Video extends Model
     {
         return $this->hasMany(Analytic::class);
     }
+
+    public function jobStatuses()
+    {
+        return $this->hasMany(JobStatus::class);
+    }
 }

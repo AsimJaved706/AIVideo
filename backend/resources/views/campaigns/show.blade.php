@@ -12,21 +12,70 @@
                     {{ $campaign->title }}
                 </h2>
                 <span
-                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-800 border border-gray-200">
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold 
+                    {{ $campaign->status === 'Paused' ? 'bg-yellow-100 text-yellow-700 border border-yellow-200' : 'bg-gray-100 text-gray-800 border border-gray-200' }}">
                     {{ $campaign->status }}
                 </span>
             </div>
-            <button
-                class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold py-2 px-4 rounded-lg shadow-sm transition flex items-center gap-2 text-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
-                    </path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-                Campaign Settings
-            </button>
+            <div class="flex items-center gap-2">
+                {{-- Pause/Resume Button --}}
+                @if($campaign->status === 'Paused')
+                    <form method="POST" action="{{ route('campaigns.resume', $campaign->id) }}" class="inline">
+                        @csrf
+                        <button type="submit"
+                            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition flex items-center gap-2 text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Resume
+                        </button>
+                    </form>
+                @elseif(in_array($campaign->status, ['Generating', 'Rendering']))
+                    <form method="POST" action="{{ route('campaigns.pause', $campaign->id) }}" class="inline">
+                        @csrf
+                        <button type="submit"
+                            class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition flex items-center gap-2 text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Pause
+                        </button>
+                    </form>
+                @endif
+
+                {{-- Delete Button --}}
+                <form method="POST" action="{{ route('campaigns.destroy', $campaign->id) }}" class="inline"
+                    onsubmit="return confirm('Are you sure you want to delete this campaign? This action cannot be undone.');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition flex items-center gap-2 text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                        Delete
+                    </button>
+                </form>
+
+                <button
+                    class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold py-2 px-4 rounded-lg shadow-sm transition flex items-center gap-2 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Settings
+                </button>
+            </div>
         </div>
     </x-slot>
 
@@ -82,7 +131,7 @@
                             </div>
                             <div class="flex items-center gap-3">
                                 <span
-                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {{ $video->status === 'Published' ? 'bg-green-100 text-green-700' : ($video->status === 'Failed' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700') }}">
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {{ $video->status === 'Published' ? 'bg-green-100 text-green-700' : ($video->status === 'Failed' ? 'bg-red-100 text-red-700' : ($video->status === 'Paused' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700')) }}">
                                     {{ $video->status }}
                                 </span>
                                 @if($video->status === 'Failed')
@@ -109,12 +158,83 @@
                                 @if($video->s3_url)
                                     <video src="{{ $video->s3_url }}" class="absolute inset-0 w-full h-full object-cover opacity-80"
                                         controls></video>
+                                @elseif($video->status === 'Paused')
+                                    <div class="text-center p-4">
+                                        <svg class="w-12 h-12 text-yellow-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="text-sm font-bold text-yellow-300">Paused</span>
+                                    </div>
+                                @elseif($video->status === 'Failed')
+                                    <div class="text-center p-4">
+                                        <svg class="w-12 h-12 text-red-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="text-sm font-bold text-red-300">Failed</span>
+                                        @if($video->error_message)
+                                            <p class="text-xs text-red-200 mt-2 max-w-[150px]">{{ Str::limit($video->error_message, 50) }}</p>
+                                        @endif
+                                    </div>
                                 @else
                                     <div class="text-center p-4">
                                         <div
                                             class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3">
                                         </div>
-                                        <span class="text-sm font-bold text-gray-300">Processing...</span>
+                                        <span class="text-sm font-bold text-gray-300">{{ $video->status }}</span>
+                                        
+                                        {{-- Processing Pipeline Steps --}}
+                                        <div class="mt-4 text-left">
+                                            @php
+                                                $steps = [
+                                                    'Generating Scripts' => 'Script Generation',
+                                                    'Fetching Visuals' => 'Fetching Visuals',
+                                                    'Generating Voice' => 'Voice Generation',
+                                                    'Rendering' => 'Video Rendering',
+                                                    'Uploading' => 'Uploading to Cloud',
+                                                    'Publishing' => 'Publishing',
+                                                ];
+                                                $currentStep = $video->status;
+                                                $stepKeys = array_keys($steps);
+                                                $currentIndex = array_search($currentStep, $stepKeys);
+                                            @endphp
+                                            
+                                            @foreach($steps as $stepKey => $stepLabel)
+                                                @php
+                                                    $stepIndex = array_search($stepKey, $stepKeys);
+                                                    $isComplete = $currentIndex !== false && $stepIndex < $currentIndex;
+                                                    $isCurrent = $stepKey === $currentStep;
+                                                @endphp
+                                                <div class="flex items-center gap-2 text-xs mb-1">
+                                                    @if($isComplete)
+                                                        <svg class="w-3 h-3 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                        </svg>
+                                                        <span class="text-green-400">{{ $stepLabel }}</span>
+                                                    @elseif($isCurrent)
+                                                        <div class="w-3 h-3 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+                                                        <span class="text-indigo-300 font-medium">{{ $stepLabel }}</span>
+                                                    @else
+                                                        <div class="w-3 h-3 rounded-full border border-gray-500"></div>
+                                                        <span class="text-gray-500">{{ $stepLabel }}</span>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        
+                                        {{-- Show latest job status if available --}}
+                                        @if($video->jobStatuses->isNotEmpty())
+                                            @php $latestJob = $video->jobStatuses->sortByDesc('updated_at')->first(); @endphp
+                                            <div class="mt-3 pt-3 border-t border-gray-700">
+                                                <p class="text-xs text-gray-400">
+                                                    Last update: {{ $latestJob->updated_at->diffForHumans() }}
+                                                </p>
+                                                @if($latestJob->error)
+                                                    <p class="text-xs text-red-300 mt-1">{{ Str::limit($latestJob->error, 60) }}</p>
+                                                @endif
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
                             </div>

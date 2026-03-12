@@ -47,7 +47,7 @@ class CampaignController extends Controller
 
     public function show($id, Request $request)
     {
-        $campaign = $request->user()->campaigns()->with(['videos.mediaAssets', 'videos.postLogs'])->findOrFail($id);
+        $campaign = $request->user()->campaigns()->with(['videos.mediaAssets', 'videos.postLogs', 'videos.jobStatuses'])->findOrFail($id);
         return view('campaigns.show', compact('campaign'));
     }
 
@@ -65,5 +65,52 @@ class CampaignController extends Controller
         \App\Jobs\GenerateScriptJob::dispatch($video);
 
         return redirect()->back()->with('success', 'Video generation restarted successfully.');
+    }
+
+    public function destroy($id, Request $request)
+    {
+        $campaign = $request->user()->campaigns()->findOrFail($id);
+        $campaign->delete();
+
+        return redirect()->route('dashboard')->with('success', 'Campaign deleted successfully.');
+    }
+
+    public function pause($id, Request $request)
+    {
+        $campaign = $request->user()->campaigns()->findOrFail($id);
+        
+        // Store previous status if we need to resume later
+        $previousStatus = $campaign->status;
+        
+        $campaign->update([
+            'status' => 'Paused',
+        ]);
+
+        // Pause all pending videos in this campaign
+        $campaign->videos()->whereNotIn('status', ['Published', 'Failed'])->update([
+            'status' => 'Paused'
+        ]);
+
+        return redirect()->back()->with('success', 'Campaign paused successfully.');
+    }
+
+    public function resume($id, Request $request)
+    {
+        $campaign = $request->user()->campaigns()->findOrFail($id);
+        
+        // Resume the campaign
+        $campaign->update([
+            'status' => 'Generating'
+        ]);
+
+        // Resume paused videos by restarting their generation
+        $pausedVideos = $campaign->videos()->where('status', 'Paused')->get();
+        
+        foreach ($pausedVideos as $video) {
+            $video->update(['status' => 'Generating Scripts']);
+            \App\Jobs\GenerateScriptJob::dispatch($video);
+        }
+
+        return redirect()->back()->with('success', 'Campaign resumed successfully.');
     }
 }

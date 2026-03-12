@@ -12,6 +12,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/campaigns/create', [\App\Http\Controllers\CampaignController::class, 'create'])->name('campaigns.create');
     Route::post('/campaigns', [\App\Http\Controllers\CampaignController::class, 'store'])->name('campaigns.store');
     Route::get('/campaigns/{id}', [\App\Http\Controllers\CampaignController::class, 'show'])->name('campaigns.show');
+    Route::delete('/campaigns/{id}', [\App\Http\Controllers\CampaignController::class, 'destroy'])->name('campaigns.destroy');
+    Route::post('/campaigns/{id}/pause', [\App\Http\Controllers\CampaignController::class, 'pause'])->name('campaigns.pause');
+    Route::post('/campaigns/{id}/resume', [\App\Http\Controllers\CampaignController::class, 'resume'])->name('campaigns.resume');
     Route::post('/videos/{id}/retry', [\App\Http\Controllers\CampaignController::class, 'retryVideo'])->name('videos.retry');
 
     Route::get('/settings', [\App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
