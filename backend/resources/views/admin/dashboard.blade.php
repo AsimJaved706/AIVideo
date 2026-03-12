@@ -121,7 +121,7 @@
                                         <td class="px-4 py-3 text-sm font-medium text-indigo-700">{{ $campaign->title }}
                                         </td>
                                         <td class="px-4 py-3 text-sm text-slate-400">{{ $campaign->topic }}</td>
-                                        <td class="px-4 py-3 text-sm text-slate-300">{{ $campaign->status }}</td>
+                                        <td class="px-4 py-3 text-sm text-slate-600">{{ $campaign->status }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

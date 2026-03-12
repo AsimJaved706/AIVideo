@@ -116,7 +116,7 @@
             <header class="top-nav px-8 py-5 flex-shrink-0 flex items-center justify-between">
                 <div class="text-2xl font-bold text-slate-900">{{ $header }}</div>
                 <div class="hidden md:flex items-center gap-3 text-sm text-slate-600">
-                    <span class="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 font-semibold text-emerald-300">System Online</span>
+                    <span class="rounded-full border border-emerald-400 bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">System Online</span>
                     <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-semibold text-slate-600">Production Workspace</span>
                 </div>
             </header>

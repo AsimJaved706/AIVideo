@@ -92,7 +92,7 @@
                                 <p class="text-xs uppercase tracking-[0.25em] text-slate-500">Studio Overview</p>
                                 <h3 class="mt-2 text-2xl font-black text-slate-900">Production Console</h3>
                             </div>
-                            <div class="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-300">Live</div>
+                            <div class="rounded-full border border-emerald-400 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">Live</div>
                         </div>
                         <div class="grid gap-4">
                             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -115,8 +115,8 @@
                                     <div class="rounded-xl bg-white p-3 border border-slate-200"><div class="text-lg font-black text-slate-900">HD</div>Export</div>
                                 </div>
                             </div>
-                            <div class="rounded-2xl border border-indigo-400/20 bg-gradient-to-r from-indigo-500/10 to-fuchsia-500/10 p-4">
-                                <p class="text-xs uppercase tracking-[0.22em] text-indigo-200">Automation stack</p>
+                            <div class="rounded-2xl border border-indigo-300 bg-gradient-to-r from-indigo-50 to-fuchsia-50 p-4">
+                                <p class="text-xs uppercase tracking-[0.22em] text-indigo-600 font-semibold">Automation stack</p>
                                 <p class="mt-2 text-lg font-bold text-slate-900">Research → Script → Voice → Visuals → Render → Publish</p>
                             </div>
                         </div>
@@ -134,22 +134,22 @@
                 </div>
                 <div class="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                     <div class="premium-card">
-                        <div class="mb-4 inline-flex rounded-2xl bg-indigo-500/10 p-3 text-indigo-300">01</div>
+                        <div class="mb-4 inline-flex rounded-2xl bg-indigo-100 px-3 py-2 text-sm font-black text-indigo-700">01</div>
                         <h3 class="text-xl font-bold text-slate-900">Natural Script Engine</h3>
                         <p class="mt-3 text-sm leading-7 text-slate-600">Generate hooks, scene breakdowns, and realistic narration built for short-form retention.</p>
                     </div>
                     <div class="premium-card">
-                        <div class="mb-4 inline-flex rounded-2xl bg-fuchsia-500/10 p-3 text-fuchsia-300">02</div>
+                        <div class="mb-4 inline-flex rounded-2xl bg-fuchsia-100 px-3 py-2 text-sm font-black text-fuchsia-700">02</div>
                         <h3 class="text-xl font-bold text-slate-900">Voice Tuning</h3>
                         <p class="mt-3 text-sm leading-7 text-slate-600">Fine-tune stability, style, speaker boost, output bitrate, and fallback behavior from settings.</p>
                     </div>
                     <div class="premium-card">
-                        <div class="mb-4 inline-flex rounded-2xl bg-cyan-500/10 p-3 text-cyan-300">03</div>
+                        <div class="mb-4 inline-flex rounded-2xl bg-cyan-100 px-3 py-2 text-sm font-black text-cyan-700">03</div>
                         <h3 class="text-xl font-bold text-slate-900">Runway Visual Control</h3>
                         <p class="mt-3 text-sm leading-7 text-slate-600">Control visual style, motion, framing, lighting, palette, duration, and negative prompts.</p>
                     </div>
                     <div class="premium-card">
-                        <div class="mb-4 inline-flex rounded-2xl bg-emerald-500/10 p-3 text-emerald-300">04</div>
+                        <div class="mb-4 inline-flex rounded-2xl bg-emerald-100 px-3 py-2 text-sm font-black text-emerald-700">04</div>
                         <h3 class="text-xl font-bold text-slate-900">Admin Visibility</h3>
                         <p class="mt-3 text-sm leading-7 text-slate-600">Track users, campaigns, and production flow from a dashboard designed for oversight.</p>
                     </div>
@@ -174,7 +174,7 @@
                         ] as $item)
                             <div class="three-d-card p-6 md:p-7">
                                 <div class="relative z-10 flex flex-col gap-4 md:flex-row md:items-start">
-                                    <div class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/30 to-fuchsia-500/30 text-lg font-black text-white">{{ $item['step'] }}</div>
+                                    <div class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-600 text-lg font-black text-white shadow-md">{{ $item['step'] }}</div>
                                     <div>
                                         <h3 class="text-xl font-bold text-slate-900">{{ $item['title'] }}</h3>
                                         <p class="mt-3 text-sm leading-7 text-slate-600">{{ $item['copy'] }}</p>
