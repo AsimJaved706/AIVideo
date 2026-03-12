@@ -92,7 +92,7 @@ php artisan view:cache
 npm ci
 npm run build
 
-chown -R www-data:www-data "$BACKEND_DIR"
+chown -R www-data:www-data "$PROJECT_DIR"
 chmod -R 755 "$BACKEND_DIR"
 chmod -R 775 "$BACKEND_DIR/storage"
 chmod -R 775 "$BACKEND_DIR/bootstrap/cache"
