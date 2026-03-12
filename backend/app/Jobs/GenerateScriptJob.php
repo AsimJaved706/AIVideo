@@ -12,6 +12,8 @@ class GenerateScriptJob implements ShouldQueue
 {
     use Queueable;
 
+    public $deleteWhenMissingModels = true;
+
     public $video;
 
     public function __construct(Video $video)
