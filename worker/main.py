@@ -34,9 +34,9 @@ class GenerateRequest(BaseModel):
     voice_model: str = "eleven_multilingual_v2"
     voice_output_format: str = "mp3_44100_128"
     fallback_language: str = "en"
-    voice_stability: float = 0.35
-    voice_similarity_boost: float = 0.8
-    voice_style: float = 0.15
+    voice_stability: float = 0.45
+    voice_similarity_boost: float = 0.85
+    voice_style: float = 0.05
     voice_speaker_boost: bool = True
     script_tone: str = "natural"
     visual_style: str = "documentary"
