@@ -81,6 +81,9 @@ if [ ! -s ".env" ]; then
     cp .env.production .env
 fi
 
+mkdir -p storage/logs bootstrap/cache
+touch storage/logs/laravel.log
+
 php artisan key:generate --force
 php artisan migrate --force
 php artisan db:seed --force
