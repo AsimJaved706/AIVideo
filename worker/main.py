@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import os
 import json
+import base64
 from typing import Optional
 
 # Import services
@@ -75,6 +76,20 @@ def build_script_preview(script_data: dict) -> str:
 
     return "\n\n".join(lines)
 
+
+def save_data_uri_to_file(data_uri: str, output_path: str) -> Optional[str]:
+    if not data_uri or not data_uri.startswith("data:image/"):
+        return None
+
+    try:
+        _, encoded = data_uri.split(",", 1)
+        with open(output_path, "wb") as file:
+            file.write(base64.b64decode(encoded))
+        return output_path
+    except Exception as exc:
+        print(f"Failed to save seed image to {output_path}: {exc}")
+        return None
+
 def process_video_pipeline(req: GenerateRequest):
     """
     Background task to orchestrate the video generation pipeline.
@@ -141,16 +156,20 @@ def process_video_pipeline(req: GenerateRequest):
         # Step 3: Generate Visuals (RunwayML + Pollinations.ai seed image)
         api_client.update_video_status(req.video_id, "Fetching Visuals")
         video_paths = []
+        fallback_image_paths = []
         for i, scene in enumerate(script_data.get('scenes', [])):
             keyword = scene.get('visual_description', '')
             if keyword:
                 vid_file = f"/tmp/{req.video_id}_scene_{i}.mp4"
+                seed_file = f"/tmp/{req.video_id}_scene_{i}_seed.jpg"
                 
                 if os.path.exists(vid_file):
                     print(f"Video file {vid_file} exists. Skipping generation.")
                     visual_url = get_asset_url(req, vid_file)
                     api_client.upload_media_record(req.video_id, "visual", visual_url, req.campaign_id)
                     video_paths.append(vid_file)
+                    if os.path.exists(seed_file):
+                        fallback_image_paths.append(seed_file)
                     continue
                     
                 try:
@@ -164,6 +183,9 @@ def process_video_pipeline(req: GenerateRequest):
                     )
                     if not image_data_uri:
                         raise Exception("Failed to generate a seed image.")
+
+                    saved_seed = save_data_uri_to_file(image_data_uri, seed_file)
+                    fallback_image_paths.append(saved_seed or "")
 
                     res = runwayml_service.generate_runway_video(
                         image_url=image_data_uri,
@@ -191,7 +213,7 @@ def process_video_pipeline(req: GenerateRequest):
         # Step 4: Render Video
         api_client.update_video_status(req.video_id, "Rendering")
         final_video_path = f"/tmp/{req.video_id}_final.mp4"
-        render_service.render_final_video(video_paths, audio_paths, final_video_path)
+        render_service.render_final_video(video_paths, audio_paths, final_video_path, fallback_image_paths)
 
         # Step 5: Upload final asset
         api_client.update_video_status(req.video_id, "Uploading")
